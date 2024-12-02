@@ -47858,23 +47858,19 @@
         </table>
     </main>
     <script>
-        let ascendingOrder = true; // Flag to control the order (ascending or descending)
+        let ascendingOrder = true;
 
         function sortTable() {
-            const table = document.querySelector("#wordTable tbody"); // Select the table body
-            const rows = Array.from(table.rows); // Convert the rows to an array
-
-            // Sort the rows based on the "Repetitions" column
+            const table = document.querySelector("#wordTable tbody");
+            const rows = Array.from(table.rows);
             rows.sort((a, b) => {
-                const numA = parseInt(a.cells[1].textContent); // Numeric value of the "Repetitions" cell
+                const numA = parseInt(a.cells[1].textContent);
                 const numB = parseInt(b.cells[1].textContent);
-                return ascendingOrder ? numA - numB : numB - numA; // Ascending or descending based on the flag
+                return ascendingOrder ? numA - numB : numB - numA;
             });
 
-            // Append the sorted rows back to the table
             rows.forEach(row => table.appendChild(row));
 
-            // Toggle the flag for the next click
             ascendingOrder = !ascendingOrder;
         }
 
@@ -47884,7 +47880,6 @@
             rows.forEach(row => {
                 const word = row.cells[0].textContent.toLowerCase();
                 const repetitions = row.cells[1].textContent;
-                // Show the row if the word or repetitions match the filter
                 if (word.includes(filter) || repetitions.includes(filter)) {
                     row.style.display = "";
                 } else {
