@@ -14,22 +14,36 @@ def process_html(html_file):
         
         soup = BeautifulSoup(content, "html.parser")
         
-        verses = []
-        for p in soup.find_all("p"):
-            if "font-weight:bold;" not in p.get("style", ""):
-                verses.extend(p.get_text().strip().split("\n"))
+        for tag in soup.find_all(["p", "h3"]):  # Incluimos <p> y <h3>
+            style = tag.get("style", "").lower()
+            if ("font-weight:bold" in style and "font-size:1.5em" in style and "text-align:center" in style) or \
+               ("font:bold" in style and ".8em verdana" in style) or \
+               ("text-align:center" in style and tag.name == "h3"):
+                tag.decompose()
+
+        for link in soup.find_all("a"):
+            link.decompose()
         
+        for numbered_tag in soup.find_all("p"):
+            if re.search(r"^\d+\.", numbered_tag.get_text().strip()):
+                numbered_tag.decompose()
+
+        verses = set() 
+        for p in soup.find_all("p"):
+            if "font-weight:bold;" not in p.get("style", ""):  
+                verses.update(p.get_text().strip().split("\n"))
+
         words = []
         for verse in verses:
             clean_verse = re.sub(r"[^a-záéíóúüñ\s]", "", verse.lower())
             words.extend(clean_verse.split())
-        
+
         filtered_words = [word for word in words if word not in EXCLUDE_WORDS]
-        
+
         count = Counter(filtered_words)
-        
+
         sorted_words = count.most_common()
-        
+
         with open("word_count.html", "w", encoding="utf-8") as f:
             f.write("""
 <!DOCTYPE html>
